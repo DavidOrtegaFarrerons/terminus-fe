@@ -1,25 +1,55 @@
-# CODING AGENTS: READ THIS FIRST
+# Terminus Frontend
 
-This is a **handoff bundle** from Claude Design (claude.ai/design).
+React + TypeScript app for the **Night Line 01** battle pass.
 
-A user mocked up designs in HTML/CSS/JS using an AI design tool, then exported this bundle so a coding agent can implement the designs for real.
+## Quick start
 
-## What you should do — IMPORTANT
+The fastest way to see it running — no backend, no npm install:
 
-**Read the chat transcripts first.** There are 1 chat transcript(s) in `chats/`. The transcripts show the full back-and-forth between the user and the design assistant — they tell you **what the user actually wants** and **where they landed** after iterating. Don't skip them. The final HTML files are the output, but the chat is where the intent lives.
+```sh
+make docker-mock
+# then open http://localhost:5173
+```
 
-**Read `project/Terminus.dc.html` in full.** The user had this file open when they triggered the handoff, so it's almost certainly the primary design they want built. Read it top to bottom — don't skim. Then **follow its imports**: open every file it pulls in (shared components, CSS, scripts) so you understand how the pieces fit together before you start implementing.
+The mock is in-memory: state resets on page reload. Dispatch events from the
+Event Console to earn XP and unlock tiers.
 
-**If anything is ambiguous, ask the user to confirm before you start implementing.** It's much cheaper to clarify scope up front than to build the wrong thing.
+## All commands
 
-## About the design files
+```sh
+make help
+```
 
-The design medium is **HTML/CSS/JS** — these are prototypes, not production code. Your job is to **recreate them pixel-perfectly** in whatever technology makes sense for the target codebase (React, Vue, native, whatever fits). Match the visual output; don't copy the prototype's internal structure unless it happens to fit.
+| Command | What it does |
+| --- | --- |
+| `make dev` | Local vite dev server, expects real backends on `:8080` / `:8081` |
+| `make dev-mock` | Local vite dev server with in-app mock (no backend needed) |
+| `make build` | Typecheck + production build to `app/dist` |
+| `make docker` | Docker compose up, real backends expected |
+| `make docker-mock` | Docker compose up with mock enabled |
+| `make down` | Stop containers |
 
-**Don't render these files in a browser or take screenshots unless the user asks you to.** Everything you need — dimensions, colors, layout rules — is spelled out in the source. Read the HTML and CSS directly; a screenshot won't tell you anything they don't.
+## Mock vs real
 
-## Bundle contents
+The switch is a single env var: `VITE_MOCK=true`. When set, `src/api.ts` routes
+every call through `src/mockApi.ts` instead of `fetch`. Nothing else in the app
+changes — same components, same polling behavior.
 
-- `README.md` — this file
-- `chats/` — conversation transcripts (read these!)
-- `project/` — the `Terminus Battle Pass Spec` project files (HTML prototypes, assets, components)
+When you want to talk to real services, unset the flag (or run `make dev` /
+`make docker`) and point at your backend with:
+
+```sh
+VITE_API_URL=https://pass-svc.example.com \
+VITE_INGEST_URL=https://ingest-svc.example.com \
+make docker
+```
+
+## Layout
+
+```
+app/            React + Vite source
+  src/api.ts    Real HTTP client (routes to mockApi when VITE_MOCK=true)
+  src/mockApi.ts  In-memory mock backend
+Makefile        Convenience wrappers
+docker-compose.yml  App container, env-driven mock flag
+```

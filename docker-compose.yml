@@ -1,0 +1,12 @@
+services:
+  app:
+    build: ./app
+    ports:
+      - "5173:5173"
+    environment:
+      VITE_MOCK: "${VITE_MOCK:-false}"
+      VITE_API_URL: "${VITE_API_URL:-http://localhost:8080}"
+      VITE_INGEST_URL: "${VITE_INGEST_URL:-http://localhost:8081}"
+    volumes:
+      - ./app:/app
+      - /app/node_modules
