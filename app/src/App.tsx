@@ -184,7 +184,7 @@ export default function App() {
         />
         <div className="panels">
           <div className="panel-row">
-            <PassengerCard progress={progress} />
+            <PassengerCard progress={progress} season={season} />
             <Leaderboard data={leaderboard} />
           </div>
           <TheLine

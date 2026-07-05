@@ -103,19 +103,13 @@ a:focus-visible {
   align-items: flex-end;
   flex-wrap: wrap;
   gap: 16px;
-  padding: 28px 0 16px;
+  padding: 28px 24px 16px;
   border-bottom: 2px solid var(--signal);
 }
 .header-brand {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-.line-chip {
-  width: 12px;
-  height: 12px;
-  background: var(--signal);
-  flex: none;
 }
 .season-name {
   margin: 0;
@@ -219,11 +213,12 @@ a:focus-visible {
   background: transparent;
   border: 1px solid var(--bone-dim);
   color: var(--bone);
-  transition: border-color 120ms, color 120ms;
+  transition: border-color 120ms, color 120ms, background-color 120ms;
 }
 .btn-secondary:hover {
   border-color: var(--signal);
   color: var(--signal);
+  background: var(--night-3);
 }
 .btn:disabled {
   opacity: 0.4;
@@ -236,6 +231,8 @@ a:focus-visible {
 .ticket {
   position: relative;
   padding: 24px 36px;
+  display: flex;
+  flex-direction: column;
 }
 .ticket-notch {
   position: absolute;
@@ -260,16 +257,36 @@ a:focus-visible {
   position: relative;
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   gap: 24px;
+  flex: 1 1 0;
+}
+.ticket-bottom {
+  position: relative;
+  flex: 1 1 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 }
 .eyebrow {
   font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--bone-dim);
+  line-height: 1;
 }
-.passenger-block { flex: 1 1 140px; min-width: 120px; }
+.passenger-block {
+  flex: 1 1 140px;
+  min-width: 120px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.passenger-name-wrap {
+  height: 80px;
+  display: flex;
+  align-items: center;
+}
 .passenger-name {
   font-family: var(--font-display);
   font-weight: 700;
@@ -278,8 +295,18 @@ a:focus-visible {
   letter-spacing: 0.04em;
   color: var(--bone);
 }
-.xp-block { flex: 0 0 auto; }
-.xp-block .eyebrow { margin-bottom: 6px; }
+.xp-block {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.tier-block {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
 .flap-row { display: flex; gap: 4px; }
 .flap-digit {
   width: 40px;
@@ -309,33 +336,22 @@ a:focus-visible {
 }
 .tier-plaque {
   flex: 0 0 auto;
-  width: 64px;
-  height: 64px;
+  width: 56px;
+  height: 56px;
   border: 2px solid var(--bone);
   border-radius: var(--radius);
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-}
-.tier-plaque-label {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--bone-dim);
-  line-height: 1;
-  margin-top: 4px;
 }
 .tier-plaque-num {
   font-family: var(--font-display);
   font-weight: 900;
   font-size: 28px;
   color: var(--bone);
-  line-height: 1.1;
+  line-height: 1;
 }
-.ticket-progress { position: relative; margin-top: 28px; }
+.ticket-progress { position: relative; }
 .progress-track { height: 6px; background: var(--night-3); }
 .progress-fill {
   height: 6px;
@@ -350,6 +366,34 @@ a:focus-visible {
   color: var(--bone-dim);
   font-variant-numeric: tabular-nums;
 }
+.ticket-stub {
+  margin-top: 16px;
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+.stub-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.stub-cell.right { text-align: right; }
+.stub-label {
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--bone-dim);
+  line-height: 1;
+}
+.stub-value {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 13px;
+  color: var(--bone);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.04em;
+}
 
 /* ── The Line ───────────────────────────────────────────── */
 .panel-line {
@@ -357,9 +401,10 @@ a:focus-visible {
   border: 1px solid var(--night-3);
   border-radius: var(--radius);
   background: var(--night);
+  padding-bottom: 24px;
 }
 .line-title {
-  padding: 14px 24px 0;
+  padding: 24px 24px 12px;
   font-family: var(--font-display);
   font-weight: 700;
   font-size: 14px;
@@ -377,24 +422,32 @@ a:focus-visible {
   scrollbar-width: thin;
   scrollbar-color: var(--night-3) transparent;
 }
+.line-scroll::-webkit-scrollbar {
+  height: 8px;
+}
+.line-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.line-scroll::-webkit-scrollbar-thumb {
+  background: var(--night-3);
+  border-radius: 4px;
+}
 .line-canvas { position: relative; height: 170px; }
-.track-dashed {
+/* segment ahead of the marker — solid 2px in --night-3 */
+.track-ahead {
   position: absolute;
-  left: 0;
-  right: 0;
-  top: 78px;
-  height: 4px;
-  background: repeating-linear-gradient(90deg, var(--night-3) 0 8px, transparent 8px 16px);
+  top: 79px;
+  height: 2px;
+  background: var(--night-3);
 }
 .track-solid {
   position: absolute;
-  left: 0;
   top: 78px;
   height: 4px;
   background: var(--signal);
-  transition: width .8s ease-out;
+  transition: width .8s ease-out, left .8s ease-out;
 }
-/* the single allowed gradient: solid segment fading into the dashed section */
+/* the single allowed gradient: solid segment fading into the ahead section */
 .track-fade {
   position: absolute;
   top: 78px;
@@ -470,22 +523,32 @@ a:focus-visible {
 .stamp {
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 10px;
+  font-size: 12px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--verdigris);
   border: 1px solid var(--verdigris);
   border-radius: var(--radius);
-  padding: 2px 6px;
-  transform: rotate(-6deg);
+  /* match .btn-claim vertical rhythm so stamps + buttons align across stations */
+  padding: 6px 12px 5px;
+  line-height: 1;
   opacity: .85;
-  margin-top: 2px;
+  margin-top: 4px;
+  text-align: center;
 }
 .btn-claim {
   font-size: 12px;
   padding: 6px 12px;
   margin-top: 4px;
+  line-height: 1;
+  box-shadow: none;
+  transition: background-color 120ms;
   animation: omDrop 300ms ease;
+}
+.btn-claim:hover { background: #FFCD4D; }
+.btn-claim:active {
+  transform: translateY(2px);
+  box-shadow: none;
 }
 .marker-label {
   position: absolute;
@@ -517,14 +580,16 @@ a:focus-visible {
   margin-top: 4px;
 }
 .console-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
   margin-top: 16px;
 }
 .console-buttons .btn {
   display: inline-flex;
   align-items: baseline;
+  justify-content: center;
+  width: 100%;
 }
 .btn-xp {
   font-family: var(--font-mono);
@@ -550,6 +615,7 @@ a:focus-visible {
   letter-spacing: 0.04em;
 }
 .activity-row { border-top: 1px solid var(--night-3); }
+.activity-row.first { border-top: none; }
 .activity-row.entering { animation: omRow 200ms ease; }
 .activity-main {
   display: flex;
@@ -577,14 +643,15 @@ a:focus-visible {
   color: var(--signal);
   font-variant-numeric: tabular-nums;
 }
-.activity-unlocked {
+.activity-tierup {
   text-align: center;
   font-family: var(--font-display);
   font-weight: 700;
-  font-size: 11px;
+  font-size: 13px;
   letter-spacing: 0.14em;
   color: var(--verdigris);
-  padding-bottom: 8px;
+  border-top: 1px solid var(--night-3);
+  padding: 12px 0;
 }
 
 /* ── Leaderboard ────────────────────────────────────────── */
@@ -595,6 +662,7 @@ a:focus-visible {
   padding: 7px 0;
   border-top: 1px solid var(--night-3);
 }
+.lb-row:first-of-type { border-top: none; }
 .lb-rank {
   font-family: var(--font-mono);
   font-weight: 500;

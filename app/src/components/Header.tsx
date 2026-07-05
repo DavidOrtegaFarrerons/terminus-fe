@@ -22,7 +22,6 @@ export function Header({ seasonName, endsAt }: { seasonName: string | null; ends
   return (
     <header className="header">
       <div className="header-brand">
-        <div className="line-chip" />
         <h1 className="season-name">{seasonName ?? '— — —'}</h1>
       </div>
       <div className="countdown-block">

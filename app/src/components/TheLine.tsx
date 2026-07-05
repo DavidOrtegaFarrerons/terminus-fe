@@ -30,14 +30,18 @@ export function TheLine({ tiers, progress, tierUpTier, claimBusy, onClaim }: The
   const scrollRef = useRef<HTMLDivElement>(null);
   const didInitialScroll = useRef(false);
 
-  const markerX = progress ? markerXFor(progress.tier, progress.tier_progress) : stationX(0);
-  const solidWidth = Math.max(0, markerX - FADE_WIDTH);
-  const lineWidth = stationX(TIER_COUNT) + 90;
+  const depotX = stationX(0);
+  const terminusX = stationX(TIER_COUNT);
+  const trackSpan = terminusX - depotX;
+
+  const markerX = progress ? markerXFor(progress.tier, progress.tier_progress) : depotX;
+  const clampedMarkerX = Math.min(Math.max(markerX, depotX), terminusX);
+  const behindWidth = Math.max(0, clampedMarkerX - depotX - FADE_WIDTH);
+  const lineWidth = terminusX + 90;
 
   const scrollTo = (x: number, smooth: boolean, attempt = 0) => {
     const el = scrollRef.current;
     if (!el || el.clientWidth === 0) {
-      // layout not ready yet — retry until the container has width
       if (attempt < 30) requestAnimationFrame(() => scrollTo(x, smooth, attempt + 1));
       return;
     }
@@ -46,14 +50,12 @@ export function TheLine({ tiers, progress, tierUpTier, claimBusy, onClaim }: The
     else el.scrollLeft = left;
   };
 
-  // On first progress load, park the YOU marker at ~40% of the viewport.
   useEffect(() => {
     if (!progress || didInitialScroll.current) return;
     didInitialScroll.current = true;
     scrollTo(markerXFor(progress.tier, progress.tier_progress), false);
   }, [progress]);
 
-  // Tier-up: auto-scroll to center the newly reached station.
   useEffect(() => {
     if (tierUpTier !== null) scrollTo(stationX(tierUpTier), true);
   }, [tierUpTier]);
@@ -74,6 +76,15 @@ export function TheLine({ tiers, progress, tierUpTier, claimBusy, onClaim }: The
     window.addEventListener('mouseup', up);
   };
 
+  // Map vertical mouse-wheel to horizontal scroll on the track.
+  const onWheel = (e: React.WheelEvent) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    if (Math.abs(e.deltaY) > Math.abs(e.deltaX)) {
+      el.scrollLeft += e.deltaY;
+    }
+  };
+
   const currentTier = progress?.tier ?? -1;
   const claimedTiers = progress?.claimed_tiers ?? [];
   const highestClaimable = progress
@@ -90,11 +101,22 @@ export function TheLine({ tiers, progress, tierUpTier, claimBusy, onClaim }: The
       <div className="line-title">
         The Line <span className="dim">· Season Route</span>
       </div>
-      <div ref={scrollRef} className="line-scroll" onMouseDown={onMouseDown}>
+      <div
+        ref={scrollRef}
+        className="line-scroll"
+        onMouseDown={onMouseDown}
+        onWheel={onWheel}
+      >
         <div className="line-canvas" style={{ width: lineWidth }}>
-          <div className="track-dashed" />
-          <div className="track-solid" style={{ width: solidWidth }} />
-          <div className="track-fade" style={{ left: solidWidth }} />
+          <div
+            className="track-ahead"
+            style={{ left: depotX, width: trackSpan }}
+          />
+          <div
+            className="track-solid"
+            style={{ left: depotX, width: behindWidth }}
+          />
+          <div className="track-fade" style={{ left: depotX + behindWidth }} />
 
           {tiers.length > 0 &&
             Array.from({ length: TIER_COUNT + 1 }, (_, t) => {
@@ -120,7 +142,11 @@ export function TheLine({ tiers, progress, tierUpTier, claimBusy, onClaim }: The
                     style={{
                       width: size,
                       height: size,
-                      background: claimed ? 'var(--verdigris)' : reached ? 'var(--signal)' : 'transparent',
+                      background: claimed
+                        ? 'var(--verdigris)'
+                        : reached
+                          ? 'var(--signal)'
+                          : 'var(--night)',
                       border: reached || claimed ? 'none' : '2px solid var(--night-3)',
                     }}
                   />
