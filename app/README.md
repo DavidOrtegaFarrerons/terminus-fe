@@ -8,6 +8,8 @@ vars at build/dev time:
 - `VITE_MOCK` — `true` to use the in-app mock, `false` (default) for real HTTP
 - `VITE_API_URL` — `pass-svc` gateway, default `http://localhost:8080`
 - `VITE_INGEST_URL` — `ingest-svc`, default `http://localhost:8081`
+- `VITE_START_XP` — mock only: seed XP the demo starts with (default `1340`)
+- `VITE_FAILURE_RATE` — mock only: 0–1 chance each request errors out (default `0.05`)
 
 Identity is the hardcoded `PLAYER_ID = "player-david"` — no auth.
 

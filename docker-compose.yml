@@ -7,6 +7,8 @@ services:
       VITE_MOCK: "${VITE_MOCK:-false}"
       VITE_API_URL: "${VITE_API_URL:-http://localhost:8080}"
       VITE_INGEST_URL: "${VITE_INGEST_URL:-http://localhost:8081}"
+      VITE_START_XP: "${VITE_START_XP:-1340}"
+      VITE_FAILURE_RATE: "${VITE_FAILURE_RATE:-0.05}"
     volumes:
       - ./app:/app
       - /app/node_modules
