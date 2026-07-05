@@ -1,4 +1,5 @@
-import { API_URL, INGEST_URL, PLAYER_ID } from './config';
+import { API_URL, INGEST_URL, IS_MOCK, PLAYER_ID } from './config';
+import * as mock from './mockApi';
 
 // ── Schemas (exact shapes from the API spec) ──
 
@@ -127,24 +128,30 @@ export async function withRetry<T>(fn: () => Promise<T>, n: number): Promise<T> 
 // ── Endpoints ──
 
 export function getSeason(): Promise<SeasonResponse> {
+  if (IS_MOCK) return mock.getSeason();
   return request(`${API_URL}/v1/season`);
 }
 
 export function getProgress(): Promise<Progress> {
+  if (IS_MOCK) return mock.getProgress();
   return request(`${API_URL}/v1/players/${PLAYER_ID}/progress`);
 }
 
 export function getActivity(limit = 15): Promise<{ events: ActivityEvent[] }> {
+  if (IS_MOCK) return mock.getActivity(limit);
   return request(`${API_URL}/v1/players/${PLAYER_ID}/activity?limit=${limit}`);
 }
 
 export function getLeaderboard(limit = 10): Promise<Leaderboard> {
+  if (IS_MOCK) return mock.getLeaderboard(limit);
   return request(`${API_URL}/v1/leaderboard?limit=${limit}&player_id=${PLAYER_ID}`);
 }
 
 export function postEvent(type: EventType): Promise<{ status: string; event_id: string }> {
+  const eventId = crypto.randomUUID();
+  if (IS_MOCK) return mock.postEvent(type, eventId);
   return post(`${INGEST_URL}/v1/events`, {
-    event_id: crypto.randomUUID(),
+    event_id: eventId,
     player_id: PLAYER_ID,
     type,
     occurred_at: new Date().toISOString(),
@@ -152,5 +159,6 @@ export function postEvent(type: EventType): Promise<{ status: string; event_id: 
 }
 
 export function claimTier(tier: number): Promise<ClaimResponse> {
+  if (IS_MOCK) return mock.claimTier(tier);
   return post(`${API_URL}/v1/players/${PLAYER_ID}/tiers/${tier}/claim`, {});
 }
