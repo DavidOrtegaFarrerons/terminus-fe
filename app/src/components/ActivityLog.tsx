@@ -1,3 +1,4 @@
+import { Fragment } from 'react';
 import type { ActivityEvent } from '../api';
 
 const EVENT_NAMES: Record<string, string> = {
@@ -22,19 +23,20 @@ export function ActivityLog({ events }: { events: ActivityEvent[] | null }) {
         <div className="activity-empty">NO ARRIVALS YET. DISPATCH AN EVENT TO DEPART.</div>
       )}
       {events?.map((ev, i) => (
-        <div
-          key={`${ev.occurred_at}:${ev.type}:${ev.xp_awarded}`}
-          className={`activity-row${i === 0 ? ' entering' : ''}`}
-        >
-          <div className="activity-main">
-            <div className="activity-time">{formatTime(ev.occurred_at)}</div>
-            <div className="activity-name">{EVENT_NAMES[ev.type] ?? ev.type}</div>
-            <div className="activity-xp">+{ev.xp_awarded} XP</div>
+        <Fragment key={`${ev.occurred_at}:${ev.type}:${ev.xp_awarded}`}>
+          <div className={`activity-row${i === 0 ? ' first entering' : ''}`}>
+            <div className="activity-main">
+              <div className="activity-time">{formatTime(ev.occurred_at)}</div>
+              <div className="activity-name">{EVENT_NAMES[ev.type] ?? ev.type}</div>
+              <div className="activity-xp">+{ev.xp_awarded} XP</div>
+            </div>
           </div>
           {ev.unlocked_tier !== null && (
-            <div className="activity-unlocked">— ARRIVED AT TIER {ev.unlocked_tier} —</div>
+            <div className="activity-tierup">
+              ARRIVED AT TIER {ev.unlocked_tier}
+            </div>
           )}
-        </div>
+        </Fragment>
       ))}
     </section>
   );
